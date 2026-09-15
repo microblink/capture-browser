@@ -29,7 +29,7 @@ import { uiStateMap } from "../core/FeedbackParser";
 // TODO: Full screen background
 
 export const CaptureScreen: Component = () => {
-  let videoRef: HTMLVideoElement;
+  let videoRef: HTMLVideoElement | undefined;
   const { solidStore, sdkStore } = useSolidStore();
 
   const { t } = useLocalization();
@@ -38,7 +38,7 @@ export const CaptureScreen: Component = () => {
   createEffect(() => {
     const captureSdk = solidStore.captureSdk;
 
-    if (!sdkStore || !captureSdk) {
+    if (!sdkStore || !captureSdk || !videoRef) {
       return;
     }
 
@@ -48,6 +48,12 @@ export const CaptureScreen: Component = () => {
         await captureSdk.startCapture();
       }
     });
+  });
+
+  createEffect(() => {
+    if (videoRef) {
+      videoRef.style.transform = `scaleX(${sdkStore.mirrorX ? -1 : 1})`;
+    }
   });
 
   return (
@@ -96,13 +102,17 @@ export const CaptureScreen: Component = () => {
 
       <HelpButton />
 
-      <video
-        class={videoStyles}
-        style={{
-          transform: `scaleX(${sdkStore.mirrorX ? -1 : 1})`,
+      <div
+        ref={(placeholder) => {
+          // Safari 27 does not paint MediaStream video elements cloned from a template.
+          // Solid renders static JSX nodes by cloning templates, so create this element imperatively.
+          const video = document.createElement("video");
+          video.className = videoStyles;
+          video.setAttribute("aria-hidden", "true");
+          video.tabIndex = -1;
+          placeholder.replaceWith(video);
+          videoRef = video;
         }}
-        ref={videoRef!}
-        src=""
       />
     </div>
   );
