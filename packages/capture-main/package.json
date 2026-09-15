@@ -2,7 +2,7 @@
   "name": "capture-main",
   "description": "",
   "private": true,
-  "version": "1.2.3",
+  "version": "1.2.4",
   "author": "",
   "scripts": {
     "build": "concurrently pnpm:build:js pnpm:build:types",

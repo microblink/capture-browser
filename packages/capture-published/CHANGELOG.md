@@ -1,5 +1,11 @@
 # @microblink/capture
 
+## 1.2.4
+
+### Patch Changes
+
+- Fix the camera preview remaining black on Safari 27 and iOS 27 even though scanning continues to work. This mitigates Apple's Safari 27 bug.
+
 ## 1.2.3
 
 ### Patch Changes
